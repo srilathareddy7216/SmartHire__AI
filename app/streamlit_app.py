@@ -281,27 +281,28 @@ elif page == "📄 Analyze My Resume":
 
         tab1, tab2, tab3, tab4 = st.tabs(["🎯 Top Matches", "✅ Shortlisting Fit", "🧩 Skill Gap Report", "📥 Download Report"])
 
-        # --- Tab 1: Top Matches ---
+        # --- Tab 1: Top Matches (NEW grid card UI) ---
         with tab1:
             st.markdown(f"**{len(matches)} best-matching postings**, ranked by content similarity.")
-            for _, row in matches.iterrows():
-                skills_have = [s for s in row["clean_skills"].split() if s and s in clean.split()]
-                job_skills_list = _parse_skills_list(row["skills_list"])
-                missing = missing_skills(raw_text, job_skills_list)[:5]
-                ring = theme.match_ring_svg(row["match_score"], color="#3D5AFE")
-                chips = "".join(f'<span class="chip tag">{s}</span>' for s in job_skills_list[:6]) if job_skills_list else ""
+            st.write("")
 
-                card_html = (
-                    f'<div class="job-card">'
-                    f'{ring}'
-                    f'<div style="flex:1;">'
-                    f'<p class="jc-title">{row["title"].title()}</p>'
-                    f'<p class="jc-meta">{row["company"] or row["source"].title()} · {row["location"] or "—"} · {row["experience"] or "Experience n/a"}</p>'
-                    f'<div>{chips}</div>'
-                    f'</div>'
-                    f'</div>'
-                )
-                st.markdown(card_html, unsafe_allow_html=True)
+            match_rows = list(matches.iterrows())
+            n_cols = 3
+            for i in range(0, len(match_rows), n_cols):
+                row_chunk = match_rows[i : i + n_cols]
+                cols = st.columns(n_cols)
+                for col, (orig_idx, row) in zip(cols, row_chunk):
+                    with col:
+                        st.markdown(
+                            theme.job_recommendation_card(
+                                title=row["title"].title(),
+                                company=row["company"] or row["source"].title(),
+                                location=row["location"] or "—",
+                                job_id=orig_idx,
+                                match_pct=row["match_score"],
+                            ),
+                            unsafe_allow_html=True,
+                        )
 
         # --- Tab 2: Fit predictor ---
         with tab2:

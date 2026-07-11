@@ -16,6 +16,8 @@ CSS = """
   --danger:#F0555F; --danger-soft:#FDE8E9;       /* soft red */
   --light-blue:#5FCBFF;                          /* extra bright accent for glows */
   --muted:#6B7290;
+  --accent-purple:#6C5CE7; --accent-purple-soft:#EFEBFF;
+  --success:#1FA971; --success-soft:#E4F7EE;
 }
 
 html, body, [class*="css"]  { font-family:'Inter', sans-serif; }
@@ -95,7 +97,7 @@ h2{ display:inline-block; padding-bottom:0.35rem; border-bottom:3px solid var(--
 .sh-stat .n{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:1.8rem; color:var(--ink);}
 .sh-stat .l{ font-size:0.83rem; color:var(--muted); margin-top:0.2rem;}
 
-/* ---------- Job match card ---------- */
+/* ---------- Job match card (legacy, still used elsewhere if needed) ---------- */
 .job-card{
   background:var(--card); border:1px solid var(--line); border-radius:16px;
   padding:1.3rem 1.5rem; margin-bottom:0.9rem; display:flex; gap:1.2rem; align-items:flex-start;
@@ -112,6 +114,46 @@ h2{ display:inline-block; padding-bottom:0.35rem; border-bottom:3px solid var(--
 .chip.missing{ background:var(--danger-soft); color:#B23B3B; }
 .chip.tag{ background:#EEF0F7; color:var(--muted); }
 .chip.cluster{ background:var(--signal-soft); color:#B23B70; }
+
+/* ---------- NEW: Job recommendation grid card ---------- */
+.jr-card{
+  background:var(--card); border:1px solid var(--line); border-left:5px solid var(--accent-purple);
+  border-radius:14px; padding:1.15rem 1.3rem 1.15rem 1.15rem; margin-bottom:1.1rem;
+  box-shadow: 0 1px 3px rgba(18,23,43,0.04);
+  transition: box-shadow .15s ease, transform .15s ease;
+  height: 100%;
+}
+.jr-card:hover{ box-shadow:0 10px 24px rgba(18,23,43,0.08); transform:translateY(-2px); }
+.jr-title-row{ display:flex; align-items:flex-start; gap:0.5rem; margin-bottom:0.55rem; }
+.jr-title-icon{ font-size:1.05rem; line-height:1.4; flex:0 0 auto; }
+.jr-title{
+  font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.03rem;
+  color:var(--ink); line-height:1.3; margin:0;
+}
+.jr-meta-row{ display:flex; align-items:center; gap:0.45rem; margin-bottom:0.3rem; }
+.jr-meta-icon{ font-size:0.85rem; flex:0 0 auto; opacity:0.85; }
+.jr-meta-text{ font-size:0.87rem; color:var(--muted); line-height:1.35; }
+.jr-bottom-row{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:0.9rem; margin-bottom:0.7rem; gap:0.6rem; flex-wrap:wrap;
+}
+.jr-id{
+  display:inline-flex; align-items:center; gap:0.3rem;
+  background:#EEF0F7; color:var(--muted); font-family:'JetBrains Mono',monospace;
+  font-size:0.76rem; font-weight:600; padding:0.28rem 0.6rem; border-radius:8px;
+}
+.jr-match{
+  display:inline-flex; align-items:center; gap:0.3rem;
+  background:var(--success-soft); color:var(--success); font-family:'Space Grotesk',sans-serif;
+  font-size:0.78rem; font-weight:700; padding:0.28rem 0.65rem; border-radius:999px;
+}
+.jr-progress-track{
+  width:100%; height:7px; border-radius:999px; background:#EDEFF6; overflow:hidden;
+}
+.jr-progress-fill{
+  height:100%; border-radius:999px;
+  background: linear-gradient(90deg, var(--accent-purple), var(--match));
+}
 
 /* ---------- Match ring ---------- */
 .ring-wrap{ position:relative; width:76px; height:76px; flex:0 0 auto; }
@@ -227,3 +269,34 @@ def match_ring_svg(pct: float, color: str = "#1FA971", size: int = 76) -> str:
 
 def stat_card(number: str, label: str) -> str:
     return f'<div class="sh-stat"><div class="n">{number}</div><div class="l">{label}</div></div>'
+
+
+def job_recommendation_card(title: str, company: str, location: str, job_id, match_pct: float) -> str:
+    """Grid-style job recommendation card: title, company, location, ID badge,
+    match% pill, and a bottom progress bar — matches the SmartHire card UI."""
+    pct = max(0, min(100, match_pct))
+    company = company or "—"
+    location = location or "—"
+    return f"""
+    <div class="jr-card">
+      <div class="jr-title-row">
+        <span class="jr-title-icon">💼</span>
+        <p class="jr-title">{title}</p>
+      </div>
+      <div class="jr-meta-row">
+        <span class="jr-meta-icon">🏢</span>
+        <span class="jr-meta-text">{company}</span>
+      </div>
+      <div class="jr-meta-row">
+        <span class="jr-meta-icon">📍</span>
+        <span class="jr-meta-text">{location}</span>
+      </div>
+      <div class="jr-bottom-row">
+        <span class="jr-id">🆔 {job_id}</span>
+        <span class="jr-match">🎯 {pct:.0f}% match</span>
+      </div>
+      <div class="jr-progress-track">
+        <div class="jr-progress-fill" style="width:{pct:.0f}%;"></div>
+      </div>
+    </div>
+    """
