@@ -283,6 +283,7 @@ elif page == "📄 Analyze My Resume":
 
         # --- Tab 1: Top Matches (NEW grid card UI) ---
         # --- Tab 1: Top Matches (NEW "orbit badge" grid UI) ---
+        # --- Tab 1: Top Matches (colorful grid UI, fixed sizing) ---
         with tab1:
             st.markdown(f"**{len(matches)} best-matching postings**, ranked by content similarity.")
             st.write("")
@@ -291,7 +292,7 @@ elif page == "📄 Analyze My Resume":
             n_cols = 3
             for i in range(0, len(match_rows), n_cols):
                 row_chunk = match_rows[i : i + n_cols]
-                cols = st.columns(n_cols)
+                cols = st.columns(n_cols, gap="medium")
                 for col, (orig_idx, row) in zip(cols, row_chunk):
                     with col:
                         st.markdown(
@@ -305,7 +306,7 @@ elif page == "📄 Analyze My Resume":
                             unsafe_allow_html=True,
                         )
 
-        # --- Tab 2: Fit predictor ---
+        # --- Tab 2: Fit predictor (custom colorful panel, no plain gauge) ---
         with tab2:
             st.markdown("Pick a posting to see its predicted **shortlisting probability** and why.")
             options = [f"{i}: {r['title'].title()} ({r['company'] or r['source']})" for i, r in matches.reset_index().iterrows()]
@@ -316,37 +317,23 @@ elif page == "📄 Analyze My Resume":
             feats = build_match_feature_vector(clean, years_exp, row, row["similarity"])
             fit_prob = fit_model.predict_proba([feats])[0, 1] * 100
 
-            g1, g2 = st.columns([1, 2])
-            with g1:
-                fig = go.Figure(go.Indicator(
-                    mode="gauge+number",
-                    value=fit_prob,
-                    number={"suffix": "%", "font": {"family": "JetBrains Mono", "size": 40}},
-                    gauge={
-                        "axis": {"range": [0, 100]},
-                        "bar": {"color": "#1FA971"},
-                        "bgcolor": "#EDEFF6",
-                        "steps": [
-                            {"range": [0, 40], "color": "#FBE9E9"},
-                            {"range": [40, 70], "color": "#FDF1DC"},
-                            {"range": [70, 100], "color": "#E4F7EE"},
-                        ],
-                    },
-                    title={"text": "Shortlisting fit"},
-                ))
-                fig.update_layout(height=260, margin=dict(l=20, r=20, t=50, b=10), paper_bgcolor="rgba(0,0,0,0)")
-                st.plotly_chart(fig, use_container_width=True)
-            with g2:
-                st.markdown(f"**{row['title'].title()}** — {row['company'] or row['source'].title()}")
-                st.write(f"Text similarity: **{feats[0]*100:.1f}%**")
-                st.write(f"Skill overlap: **{feats[1]*100:.1f}%**")
-                st.write(f"Experience match: **{feats[2]*100:.1f}%**")
-                st.write(f"Title overlap: **{feats[3]*100:.1f}%**")
-                st.caption(
-                    "This model is trained with weak supervision (see README) — treat the "
-                    "percentage as a directional signal, not a hiring guarantee."
-                )
+            features = [
+                ("📝", "Text similarity", feats[0] * 100, "#2F5BFF"),
+                ("🧩", "Skill overlap", feats[1] * 100, "#1FA971"),
+                ("📅", "Experience match", feats[2] * 100, "#FF7A1A"),
+                ("🏷️", "Title overlap", feats[3] * 100, "#FF4FA3"),
+            ]
 
+            st.markdown(
+                theme.fit_panel(
+                    job_title=row["title"].title(),
+                    company=row["company"] or row["source"].title(),
+                    fit_pct=fit_prob,
+                    features=features,
+                ),
+                unsafe_allow_html=True,
+            )
+        
         # --- Tab 3: Skill Gap ---
         with tab3:
             st.markdown("**Skills to add**, based on your top matches and closest job cluster.")
