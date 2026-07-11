@@ -414,17 +414,15 @@ def fit_panel(job_title: str, company: str, fit_pct: float, features: list[tuple
     """
     gauge = fit_gauge_svg(fit_pct)
     rows = "".join(fit_feature_row(icon, label, pct, color) for icon, label, pct, color in features)
-    return f"""
-    <div class="fit-panel">
-      {gauge}
-      <div class="fit-info">
-        <p class="fit-job-title">🎯 {job_title}</p>
-        <p class="fit-job-company">🏢 {company}</p>
-        {rows}
-        <div class="fit-note">
-          ⚠️ This model is trained with weak supervision — treat the percentage as a
-          directional signal, not a hiring guarantee.
-        </div>
-      </div>
-    </div>
-    """
+    html = (
+        '<div class="fit-panel">'
+        + gauge
+        + '<div class="fit-info">'
+        + f'<p class="fit-job-title">🎯 {job_title}</p>'
+        + f'<p class="fit-job-company">🏢 {company}</p>'
+        + rows
+        + '<div class="fit-note">⚠️ This model is trained with weak supervision — treat the percentage as a directional signal, not a hiring guarantee.</div>'
+        + '</div>'
+        + '</div>'
+    )
+    return html
