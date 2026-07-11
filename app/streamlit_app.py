@@ -282,6 +282,7 @@ elif page == "📄 Analyze My Resume":
         tab1, tab2, tab3, tab4 = st.tabs(["🎯 Top Matches", "✅ Shortlisting Fit", "🧩 Skill Gap Report", "📥 Download Report"])
 
         # --- Tab 1: Top Matches (NEW grid card UI) ---
+        # --- Tab 1: Top Matches (NEW "orbit badge" grid UI) ---
         with tab1:
             st.markdown(f"**{len(matches)} best-matching postings**, ranked by content similarity.")
             st.write("")

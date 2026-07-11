@@ -16,8 +16,9 @@ CSS = """
   --danger:#F0555F; --danger-soft:#FDE8E9;       /* soft red */
   --light-blue:#5FCBFF;                          /* extra bright accent for glows */
   --muted:#6B7290;
-  --accent-purple:#6C5CE7; --accent-purple-soft:#EFEBFF;
-  --success:#1FA971; --success-soft:#E4F7EE;
+  --tier-hi:#1FA971; --tier-hi-soft:#E4F7EE;
+  --tier-mid:#2F5BFF; --tier-mid-soft:#E7ECFF;
+  --tier-lo:#FF7A1A; --tier-lo-soft:#FFEEDD;
 }
 
 html, body, [class*="css"]  { font-family:'Inter', sans-serif; }
@@ -115,44 +116,88 @@ h2{ display:inline-block; padding-bottom:0.35rem; border-bottom:3px solid var(--
 .chip.tag{ background:#EEF0F7; color:var(--muted); }
 .chip.cluster{ background:var(--signal-soft); color:#B23B70; }
 
-/* ---------- NEW: Job recommendation grid card ---------- */
+/* ---------- NEW: Job recommendation card — "orbit badge" style ---------- */
 .jr-card{
-  background:var(--card); border:1px solid var(--line); border-left:5px solid var(--accent-purple);
-  border-radius:14px; padding:1.15rem 1.3rem 1.15rem 1.15rem; margin-bottom:1.1rem;
+  position:relative;
+  background:var(--card); border:1px solid var(--line);
+  border-radius:18px; padding:1.4rem 1.35rem 1.15rem 1.35rem; margin-bottom:1.3rem;
   box-shadow: 0 1px 3px rgba(18,23,43,0.04);
-  transition: box-shadow .15s ease, transform .15s ease;
-  height: 100%;
+  transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+  overflow:visible; height:100%;
 }
-.jr-card:hover{ box-shadow:0 10px 24px rgba(18,23,43,0.08); transform:translateY(-2px); }
-.jr-title-row{ display:flex; align-items:flex-start; gap:0.5rem; margin-bottom:0.55rem; }
-.jr-title-icon{ font-size:1.05rem; line-height:1.4; flex:0 0 auto; }
+.jr-card::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:4px;
+  border-radius:18px 18px 0 0;
+  background: linear-gradient(90deg, var(--tier-color1), var(--tier-color2));
+}
+.jr-card:hover{
+  box-shadow:0 14px 30px rgba(18,23,43,0.10); transform:translateY(-3px);
+  border-color:#D5DAEA;
+}
+
+.jr-orbit{
+  position:absolute; top:-14px; right:16px;
+  width:54px; height:54px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+  background: var(--tier-soft);
+  border: 3px solid var(--card);
+  box-shadow: 0 4px 12px rgba(18,23,43,0.12);
+}
+.jr-orbit .pct{
+  font-family:'JetBrains Mono',monospace; font-weight:700; font-size:0.88rem; color:var(--tier-color1);
+  line-height:1;
+}
+.jr-orbit .sign{
+  font-size:0.55rem; color:var(--tier-color1); font-weight:700; margin-top:1px;
+}
+
+.jr-avatar-row{ display:flex; align-items:flex-start; gap:0.7rem; margin:0.2rem 2.6rem 0.7rem 0; }
+.jr-avatar{
+  width:38px; height:38px; border-radius:11px; flex:0 0 auto;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.0rem; color:#fff;
+  background: linear-gradient(135deg, var(--tier-color1), var(--tier-color2));
+}
+.jr-title-block{ min-width:0; }
 .jr-title{
-  font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.03rem;
-  color:var(--ink); line-height:1.3; margin:0;
+  font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.0rem;
+  color:var(--ink); line-height:1.28; margin:0 0 0.15rem 0;
 }
-.jr-meta-row{ display:flex; align-items:center; gap:0.45rem; margin-bottom:0.3rem; }
-.jr-meta-icon{ font-size:0.85rem; flex:0 0 auto; opacity:0.85; }
-.jr-meta-text{ font-size:0.87rem; color:var(--muted); line-height:1.35; }
-.jr-bottom-row{
-  display:flex; align-items:center; justify-content:space-between;
-  margin-top:0.9rem; margin-bottom:0.7rem; gap:0.6rem; flex-wrap:wrap;
+.jr-company{
+  font-size:0.83rem; color:var(--muted); font-weight:500; margin:0;
 }
-.jr-id{
-  display:inline-flex; align-items:center; gap:0.3rem;
-  background:#EEF0F7; color:var(--muted); font-family:'JetBrains Mono',monospace;
-  font-size:0.76rem; font-weight:600; padding:0.28rem 0.6rem; border-radius:8px;
+
+.jr-loc{
+  display:flex; align-items:center; gap:0.35rem; margin:0.55rem 0 0.9rem 0;
+  font-size:0.82rem; color:var(--muted);
 }
-.jr-match{
-  display:inline-flex; align-items:center; gap:0.3rem;
-  background:var(--success-soft); color:var(--success); font-family:'Space Grotesk',sans-serif;
-  font-size:0.78rem; font-weight:700; padding:0.28rem 0.65rem; border-radius:999px;
+.jr-loc-icon{ opacity:0.8; }
+
+.jr-footer{
+  display:flex; align-items:center; justify-content:space-between; gap:0.5rem;
+  margin-bottom:0.6rem;
 }
-.jr-progress-track{
-  width:100%; height:7px; border-radius:999px; background:#EDEFF6; overflow:hidden;
+.jr-id-tag{
+  font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--muted);
+  background:#F3F5FB; border:1px dashed var(--line); padding:0.2rem 0.55rem; border-radius:7px;
 }
-.jr-progress-fill{
+.jr-tier-label{
+  font-family:'Space Grotesk',sans-serif; font-size:0.72rem; font-weight:700;
+  color:var(--tier-color1); text-transform:uppercase; letter-spacing:0.03em;
+}
+
+.jr-track{
+  width:100%; height:6px; border-radius:999px; background:#EEF0F7; overflow:hidden; position:relative;
+}
+.jr-fill{
   height:100%; border-radius:999px;
-  background: linear-gradient(90deg, var(--accent-purple), var(--match));
+  background: linear-gradient(90deg, var(--tier-color1), var(--tier-color2));
+  position:relative;
+}
+.jr-fill::after{
+  content:""; position:absolute; right:-2px; top:50%; transform:translateY(-50%);
+  width:9px; height:9px; border-radius:50%; background:var(--tier-color1);
+  box-shadow: 0 0 0 3px var(--tier-soft);
 }
 
 /* ---------- Match ring ---------- */
@@ -271,32 +316,53 @@ def stat_card(number: str, label: str) -> str:
     return f'<div class="sh-stat"><div class="n">{number}</div><div class="l">{label}</div></div>'
 
 
+def _tier_for(pct: float):
+    """Return (color1, color2, soft-bg, label) for a match percentage tier."""
+    if pct >= 80:
+        return "#1FA971", "#5FCBFF", "#E4F7EE", "Strong fit"
+    elif pct >= 60:
+        return "#2F5BFF", "#8A6CFF", "#E7ECFF", "Good fit"
+    else:
+        return "#FF7A1A", "#FF4FA3", "#FFEEDD", "Worth a look"
+
+
 def job_recommendation_card(title: str, company: str, location: str, job_id, match_pct: float) -> str:
-    """Grid-style job recommendation card: title, company, location, ID badge,
-    match% pill, and a bottom progress bar — matches the SmartHire card UI."""
+    """'Orbit badge' style job recommendation card — a floating circular match
+    score badge, a gradient company-initial avatar, and a gradient progress
+    rail with a leading dot, color-coded by match tier."""
     pct = max(0, min(100, match_pct))
     company = company or "—"
     location = location or "—"
+    initial = (company[:1] or "?").upper()
+    color1, color2, soft, tier_label = _tier_for(pct)
+
+    style_vars = (
+        f'--tier-color1:{color1}; --tier-color2:{color2}; --tier-soft:{soft};'
+    )
+
     return f"""
-    <div class="jr-card">
-      <div class="jr-title-row">
-        <span class="jr-title-icon">💼</span>
-        <p class="jr-title">{title}</p>
+    <div class="jr-card" style="{style_vars}">
+      <div class="jr-orbit">
+        <div class="pct">{pct:.0f}%</div>
+        <div class="sign">MATCH</div>
       </div>
-      <div class="jr-meta-row">
-        <span class="jr-meta-icon">🏢</span>
-        <span class="jr-meta-text">{company}</span>
+      <div class="jr-avatar-row">
+        <div class="jr-avatar">{initial}</div>
+        <div class="jr-title-block">
+          <p class="jr-title">{title}</p>
+          <p class="jr-company">{company}</p>
+        </div>
       </div>
-      <div class="jr-meta-row">
-        <span class="jr-meta-icon">📍</span>
-        <span class="jr-meta-text">{location}</span>
+      <div class="jr-loc">
+        <span class="jr-loc-icon">📍</span>
+        <span>{location}</span>
       </div>
-      <div class="jr-bottom-row">
-        <span class="jr-id">🆔 {job_id}</span>
-        <span class="jr-match">🎯 {pct:.0f}% match</span>
+      <div class="jr-footer">
+        <span class="jr-id-tag">#{job_id}</span>
+        <span class="jr-tier-label">{tier_label}</span>
       </div>
-      <div class="jr-progress-track">
-        <div class="jr-progress-fill" style="width:{pct:.0f}%;"></div>
+      <div class="jr-track">
+        <div class="jr-fill" style="width:{pct:.0f}%;"></div>
       </div>
     </div>
     """
