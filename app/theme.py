@@ -110,7 +110,7 @@ h2{ display:inline-block; padding-bottom:0.35rem; border-bottom:3px solid var(--
 .chip.tag{ background:#EEF0F7; color:var(--muted); }
 .chip.cluster{ background:var(--signal-soft); color:#B23B70; }
 
-/* ---------- NEW job recommendation card (inline-colored, size fixed) ---------- */
+/* ---------- Job recommendation card ---------- */
 .jr-card{
   position:relative;
   background:#fff; border:1px solid var(--line);
@@ -153,7 +153,7 @@ h2{ display:inline-block; padding-bottom:0.35rem; border-bottom:3px solid var(--
 .jr-track{ width:100%; height:8px; border-radius:999px; background:#EEF0F7; overflow:hidden; }
 .jr-fill{ height:100%; border-radius:999px; }
 
-/* ---------- NEW fit-score panel (Tab 2 replacement for plain gauge) ---------- */
+/* ---------- Fit-score panel ---------- */
 .fit-panel{
   display:flex; gap:2rem; align-items:center; flex-wrap:wrap;
   background:#fff; border:1px solid var(--line); border-radius:20px;
@@ -251,28 +251,28 @@ def inject():
 
 
 def main_header() -> str:
-    return """
-    <div class="sh-topbar">
-      <div class="sh-topbar-badge">💼</div>
-      <div class="sh-topbar-text">
-        <div class="sh-topbar-title">SmartHire</div>
-        <div class="sh-topbar-sub">Resume-to-Job Matching &amp; Career Guidance Engine</div>
-        <div class="sh-topbar-rule"></div>
-      </div>
-    </div>
-    """
+    return (
+        '<div class="sh-topbar">'
+        '<div class="sh-topbar-badge">💼</div>'
+        '<div class="sh-topbar-text">'
+        '<div class="sh-topbar-title">SmartHire</div>'
+        '<div class="sh-topbar-sub">Resume-to-Job Matching &amp; Career Guidance Engine</div>'
+        '<div class="sh-topbar-rule"></div>'
+        '</div>'
+        '</div>'
+    )
 
 
 def sidebar_brand() -> str:
-    return """
-    <div class="sh-brand">
-      <div class="sh-brand-badge">💼</div>
-      <div>
-        <div class="sh-brand-name">SmartHire</div>
-        <div class="sh-brand-tag">Resume → Job Matching Engine</div>
-      </div>
-    </div>
-    """
+    return (
+        '<div class="sh-brand">'
+        '<div class="sh-brand-badge">💼</div>'
+        '<div>'
+        '<div class="sh-brand-name">SmartHire</div>'
+        '<div class="sh-brand-tag">Resume → Job Matching Engine</div>'
+        '</div>'
+        '</div>'
+    )
 
 
 def match_ring_svg(pct: float, color: str = "#1FA971", size: int = 76) -> str:
@@ -281,17 +281,21 @@ def match_ring_svg(pct: float, color: str = "#1FA971", size: int = 76) -> str:
     c = size / 2
     circumference = 2 * 3.14159265 * r
     offset = circumference * (1 - pct / 100)
-    return f"""
-    <div class="ring-wrap">
-      <svg width="{size}" height="{size}" viewBox="0 0 {size} {size}">
-        <circle cx="{c}" cy="{c}" r="{r}" fill="none" stroke="#EDEFF6" stroke-width="7"/>
-        <circle cx="{c}" cy="{c}" r="{r}" fill="none" stroke="{color}" stroke-width="7"
-                stroke-linecap="round" stroke-dasharray="{circumference:.2f}"
-                stroke-dashoffset="{offset:.2f}" transform="rotate(-90 {c} {c})"/>
-      </svg>
-      <div class="ring-label">{pct:.0f}%</div>
-    </div>
-    """
+    svg = (
+        f'<svg width="{size}" height="{size}" viewBox="0 0 {size} {size}">'
+        + f'<circle cx="{c}" cy="{c}" r="{r}" fill="none" stroke="#EDEFF6" stroke-width="7"/>'
+        + f'<circle cx="{c}" cy="{c}" r="{r}" fill="none" stroke="{color}" stroke-width="7" '
+        + 'stroke-linecap="round" '
+        + f'stroke-dasharray="{circumference:.2f}" stroke-dashoffset="{offset:.2f}" '
+        + f'transform="rotate(-90 {c} {c})"/>'
+        + '</svg>'
+    )
+    return (
+        '<div class="ring-wrap">'
+        + svg
+        + f'<div class="ring-label">{pct:.0f}%</div>'
+        + '</div>'
+    )
 
 
 def stat_card(number: str, label: str) -> str:
@@ -332,29 +336,29 @@ def job_recommendation_card(title: str, company: str, location: str, job_id, mat
     c1, c2, soft, text_color, icon, tier_label = _tier_for(pct)
     avatar_color = _company_color(company)
 
-    return f"""
-    <div class="jr-card">
-      <div class="jr-strip" style="background:linear-gradient(90deg, {c1}, {c2});"></div>
-      <div class="jr-head">
-        <div class="jr-avatar" style="background:linear-gradient(135deg, {avatar_color}, {c2});">💼</div>
-        <div class="jr-badge" style="background:linear-gradient(135deg, {c1}, {c2});">
-          <div class="pct">{pct:.0f}%</div>
-          <div class="sign">MATCH</div>
-        </div>
-      </div>
-      <p class="jr-title">{title}</p>
-      <p class="jr-company">🏢 {company}</p>
-      <div class="jr-loc">📍 {location}</div>
-      <div class="jr-divider"></div>
-      <div class="jr-footer">
-        <span class="jr-id-tag">🆔 #{job_id}</span>
-        <span class="jr-tier" style="background:{soft}; color:{text_color};">{icon} {tier_label}</span>
-      </div>
-      <div class="jr-track">
-        <div class="jr-fill" style="width:{pct:.0f}%; background:linear-gradient(90deg, {c1}, {c2});"></div>
-      </div>
-    </div>
-    """
+    return (
+        '<div class="jr-card">'
+        + f'<div class="jr-strip" style="background:linear-gradient(90deg, {c1}, {c2});"></div>'
+        + '<div class="jr-head">'
+        + f'<div class="jr-avatar" style="background:linear-gradient(135deg, {avatar_color}, {c2});">💼</div>'
+        + f'<div class="jr-badge" style="background:linear-gradient(135deg, {c1}, {c2});">'
+        + f'<div class="pct">{pct:.0f}%</div>'
+        + '<div class="sign">MATCH</div>'
+        + '</div>'
+        + '</div>'
+        + f'<p class="jr-title">{title}</p>'
+        + f'<p class="jr-company">🏢 {company}</p>'
+        + f'<div class="jr-loc">📍 {location}</div>'
+        + '<div class="jr-divider"></div>'
+        + '<div class="jr-footer">'
+        + f'<span class="jr-id-tag">🆔 #{job_id}</span>'
+        + f'<span class="jr-tier" style="background:{soft}; color:{text_color};">{icon} {tier_label}</span>'
+        + '</div>'
+        + '<div class="jr-track">'
+        + f'<div class="jr-fill" style="width:{pct:.0f}%; background:linear-gradient(90deg, {c1}, {c2});"></div>'
+        + '</div>'
+        + '</div>'
+    )
 
 
 def fit_gauge_svg(pct: float, size: int = 180) -> str:
@@ -366,45 +370,46 @@ def fit_gauge_svg(pct: float, size: int = 180) -> str:
     circumference = 2 * 3.14159265 * r
     offset = circumference * (1 - pct / 100)
     gradient_id = "fitgrad"
-    return f"""
-    <div class="fit-gauge-wrap">
-      <svg width="{size}" height="{size}" viewBox="0 0 {size} {size}">
-        <defs>
-          <linearGradient id="{gradient_id}" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="{c1}"/>
-            <stop offset="100%" stop-color="{c2}"/>
-          </linearGradient>
-        </defs>
-        <circle cx="{c}" cy="{c}" r="{r}" fill="{soft}" stroke="#EDEFF6" stroke-width="1"/>
-        <circle cx="{c}" cy="{c}" r="{r}" fill="none" stroke="#EDEFF6" stroke-width="14"/>
-        <circle cx="{c}" cy="{c}" r="{r}" fill="none" stroke="url(#{gradient_id})" stroke-width="14"
-                stroke-linecap="round" stroke-dasharray="{circumference:.2f}"
-                stroke-dashoffset="{offset:.2f}" transform="rotate(-90 {c} {c})"/>
-      </svg>
-      <div class="fit-gauge-center">
-        <div class="fit-gauge-pct" style="color:{c1};">{pct:.0f}%</div>
-        <div class="fit-gauge-label">{icon} {tier_label}</div>
-      </div>
-    </div>
-    """
+    svg = (
+        f'<svg width="{size}" height="{size}" viewBox="0 0 {size} {size}">'
+        + f'<defs><linearGradient id="{gradient_id}" x1="0%" y1="0%" x2="100%" y2="100%">'
+        + f'<stop offset="0%" stop-color="{c1}"/><stop offset="100%" stop-color="{c2}"/>'
+        + '</linearGradient></defs>'
+        + f'<circle cx="{c}" cy="{c}" r="{r}" fill="{soft}" stroke="#EDEFF6" stroke-width="1"/>'
+        + f'<circle cx="{c}" cy="{c}" r="{r}" fill="none" stroke="#EDEFF6" stroke-width="14"/>'
+        + f'<circle cx="{c}" cy="{c}" r="{r}" fill="none" stroke="url(#{gradient_id})" stroke-width="14" '
+        + 'stroke-linecap="round" '
+        + f'stroke-dasharray="{circumference:.2f}" stroke-dashoffset="{offset:.2f}" '
+        + f'transform="rotate(-90 {c} {c})"/>'
+        + '</svg>'
+    )
+    return (
+        '<div class="fit-gauge-wrap">'
+        + svg
+        + '<div class="fit-gauge-center">'
+        + f'<div class="fit-gauge-pct" style="color:{c1};">{pct:.0f}%</div>'
+        + f'<div class="fit-gauge-label">{icon} {tier_label}</div>'
+        + '</div>'
+        + '</div>'
+    )
 
 
 def fit_feature_row(icon: str, label: str, pct: float, color: str) -> str:
     pct = max(0, min(100, pct))
-    return f"""
-    <div class="fit-feature-row">
-      <div class="fit-feature-icon" style="background:{color}22; color:{color};">{icon}</div>
-      <div class="fit-feature-body">
-        <div class="fit-feature-top">
-          <span class="fit-feature-label">{label}</span>
-          <span class="fit-feature-val" style="color:{color};">{pct:.1f}%</span>
-        </div>
-        <div class="fit-feature-track">
-          <div class="fit-feature-fill" style="width:{pct:.0f}%; background:{color};"></div>
-        </div>
-      </div>
-    </div>
-    """
+    return (
+        '<div class="fit-feature-row">'
+        + f'<div class="fit-feature-icon" style="background:{color}22; color:{color};">{icon}</div>'
+        + '<div class="fit-feature-body">'
+        + '<div class="fit-feature-top">'
+        + f'<span class="fit-feature-label">{label}</span>'
+        + f'<span class="fit-feature-val" style="color:{color};">{pct:.1f}%</span>'
+        + '</div>'
+        + '<div class="fit-feature-track">'
+        + f'<div class="fit-feature-fill" style="width:{pct:.0f}%; background:{color};"></div>'
+        + '</div>'
+        + '</div>'
+        + '</div>'
+    )
 
 
 def fit_panel(job_title: str, company: str, fit_pct: float, features: list[tuple]) -> str:
@@ -414,7 +419,7 @@ def fit_panel(job_title: str, company: str, fit_pct: float, features: list[tuple
     """
     gauge = fit_gauge_svg(fit_pct)
     rows = "".join(fit_feature_row(icon, label, pct, color) for icon, label, pct, color in features)
-    html = (
+    return (
         '<div class="fit-panel">'
         + gauge
         + '<div class="fit-info">'
@@ -425,4 +430,3 @@ def fit_panel(job_title: str, company: str, fit_pct: float, features: list[tuple
         + '</div>'
         + '</div>'
     )
-    return html
