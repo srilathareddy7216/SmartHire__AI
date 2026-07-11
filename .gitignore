@@ -1,0 +1,40 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+
+# --- Virtual environments ---
+venv/
+.venv/
+env/
+ENV/
+
+# --- Raw & full processed data (large, regenerate locally via train_all.py) ---
+data/raw/*
+!data/raw/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+data/processed/job_corpus.csv
+data/processed/job_corpus.parquet
+data/processed/resumes_clean.csv
+data/processed/resumes_clean.parquet
+
+# NOTE: data/processed/job_corpus_app.csv.gz IS committed on purpose — it's
+# the slim file the deployed Streamlit app actually reads.
+
+# --- Streamlit ---
+.streamlit/secrets.toml
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- OS / editor ---
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# --- Logs ---
+*.log
