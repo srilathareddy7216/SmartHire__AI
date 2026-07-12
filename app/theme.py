@@ -253,7 +253,7 @@ def inject():
 def main_header() -> str:
     return (
         '<div class="sh-topbar">'
-        '<div class="sh-topbar-badge">💼</div>'
+        '<div class="sh-topbar-badge">🎓</div>'
         '<div class="sh-topbar-text">'
         '<div class="sh-topbar-title">SmartHire</div>'
         '<div class="sh-topbar-sub">Resume-to-Job Matching &amp; Career Guidance Engine</div>'
@@ -266,7 +266,7 @@ def main_header() -> str:
 def sidebar_brand() -> str:
     return (
         '<div class="sh-brand">'
-        '<div class="sh-brand-badge">💼</div>'
+        '<div class="sh-brand-badge">🎓</div>'
         '<div>'
         '<div class="sh-brand-name">SmartHire</div>'
         '<div class="sh-brand-tag">Resume → Job Matching Engine</div>'
