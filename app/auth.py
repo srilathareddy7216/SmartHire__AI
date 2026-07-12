@@ -133,21 +133,120 @@ def is_authenticated() -> bool:
 
 
 # ---------------------------------------------------------------------------
-# UI
+# UI — colorful styling for the auth screen
 # ---------------------------------------------------------------------------
-def render_auth_gate() -> None:
-    """Renders a Login / Sign up tabbed form. Call this before any protected
-    content, then st.stop() if is_authenticated() is still False."""
-    st.markdown("## 🔐 Welcome to SmartHire")
-    st.caption("Log in or create an account to continue.")
+_AUTH_CSS = """
+<style>
+/* Center + cap width of the auth card */
+div[data-testid="stAppViewContainer"] .block-container:has(#sh-auth-anchor){
+  max-width: 460px;
+  padding-top: 2.2rem;
+}
 
-    tab_login, tab_signup = st.tabs(["Log In", "Sign Up"])
+#sh-auth-anchor{ display:none; }
+
+.sh-auth-hero{
+  text-align:center;
+  padding: 1.6rem 1rem 1.8rem 1rem;
+  margin-bottom: 1.2rem;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #2F5BFF 0%, #7B5CFF 45%, #FF4FA3 100%);
+  box-shadow: 0 14px 34px rgba(63, 60, 165, 0.28);
+  color: #fff !important;
+}
+.sh-auth-hero .sh-auth-badge{
+  width:64px; height:64px; margin:0 auto 0.8rem auto; border-radius:18px;
+  background: rgba(255,255,255,0.18);
+  display:flex; align-items:center; justify-content:center; font-size:1.9rem;
+  border: 1px solid rgba(255,255,255,0.35);
+}
+.sh-auth-hero h1{
+  color:#fff !important; font-family:'Space Grotesk', sans-serif !important;
+  font-size:1.7rem; margin:0 0 0.3rem 0; letter-spacing:-0.02em;
+}
+.sh-auth-hero p{
+  color: rgba(255,255,255,0.92) !important; font-size:0.92rem; margin:0;
+}
+
+/* Tabs — colorful pill style */
+div[data-testid="stAppViewContainer"] .stTabs [data-baseweb="tab-list"]{
+  gap: 8px; background: #EEF1FB; padding: 6px; border-radius: 14px;
+  border: 1px solid #E1E7F7;
+}
+div[data-testid="stAppViewContainer"] .stTabs [data-baseweb="tab"]{
+  flex:1; justify-content:center; border-radius: 10px !important;
+  font-family:'Space Grotesk', sans-serif; font-weight:600; color:#6B7290;
+  padding: 0.5rem 0.8rem;
+}
+div[data-testid="stAppViewContainer"] .stTabs [aria-selected="true"]{
+  background: linear-gradient(90deg, #2F5BFF, #7B5CFF) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 16px rgba(47,91,255,0.35);
+}
+div[data-testid="stAppViewContainer"] .stTabs [data-baseweb="tab-highlight"],
+div[data-testid="stAppViewContainer"] .stTabs [data-baseweb="tab-border"]{
+  display:none;
+}
+
+/* Form card */
+div[data-testid="stForm"]{
+  border: 1px solid #E1E7F7; border-radius: 18px; padding: 1.6rem 1.5rem 1.2rem 1.5rem;
+  background: #fff; box-shadow: 0 4px 18px rgba(18,23,43,0.05); margin-top: 0.9rem;
+}
+
+/* Inputs */
+div[data-testid="stForm"] input{
+  border-radius: 10px !important; border: 1.5px solid #E1E7F7 !important;
+}
+div[data-testid="stForm"] input:focus{
+  border-color:#2F5BFF !important; box-shadow: 0 0 0 3px rgba(47,91,255,0.15) !important;
+}
+
+/* Buttons inside the login form = blue, inside signup = pink/purple */
+#sh-login-marker + div [data-testid="stFormSubmitButton"] button{
+  background: linear-gradient(90deg, #2F5BFF, #5B7FFF) !important;
+  border:none !important; font-weight:700 !important; border-radius: 10px !important;
+  box-shadow: 0 8px 20px rgba(47,91,255,0.3);
+}
+#sh-signup-marker + div [data-testid="stFormSubmitButton"] button{
+  background: linear-gradient(90deg, #FF4FA3, #FF7A1A) !important;
+  border:none !important; font-weight:700 !important; border-radius: 10px !important;
+  box-shadow: 0 8px 20px rgba(255,79,163,0.3);
+}
+[data-testid="stFormSubmitButton"] button:hover{
+  filter: brightness(1.06); transform: translateY(-1px);
+}
+
+.sh-auth-footnote{
+  text-align:center; font-size:0.78rem; color:#6B7290; margin-top:1rem;
+}
+</style>
+"""
+
+
+def render_auth_gate() -> None:
+    """Renders a colorful Login / Sign up screen. Call this before any
+    protected content, then st.stop() if is_authenticated() is still False."""
+    st.markdown(_AUTH_CSS, unsafe_allow_html=True)
+    st.markdown('<span id="sh-auth-anchor"></span>', unsafe_allow_html=True)
+
+    st.markdown(
+        '<div class="sh-auth-hero">'
+        '<div class="sh-auth-badge">🔐</div>'
+        '<h1>Welcome to SmartHire</h1>'
+        '<p>Log in or create an account to start matching your resume to real jobs.</p>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+
+    tab_login, tab_signup = st.tabs(["🔵 Log In", "🌸 Sign Up"])
 
     with tab_login:
+        st.markdown('<span id="sh-login-marker"></span>', unsafe_allow_html=True)
         with st.form("login_form", clear_on_submit=False):
-            username = st.text_input("Username")
-            password = st.text_input("Password", type="password")
-            submitted = st.form_submit_button("Log In", type="primary", use_container_width=True)
+            username = st.text_input("👤 Username")
+            password = st.text_input("🔑 Password", type="password")
+            submitted = st.form_submit_button("Log In →", type="primary", use_container_width=True)
         if submitted:
             ok, msg = login_user(username, password)
             if ok:
@@ -158,13 +257,14 @@ def render_auth_gate() -> None:
                 st.error(msg)
 
     with tab_signup:
+        st.markdown('<span id="sh-signup-marker"></span>', unsafe_allow_html=True)
         with st.form("signup_form", clear_on_submit=False):
-            new_username = st.text_input("Choose a username")
-            new_email = st.text_input("Email")
-            new_password = st.text_input("Password", type="password")
-            confirm_password = st.text_input("Confirm password", type="password")
+            new_username = st.text_input("👤 Choose a username")
+            new_email = st.text_input("📧 Email")
+            new_password = st.text_input("🔑 Password", type="password")
+            confirm_password = st.text_input("🔑 Confirm password", type="password")
             submitted_signup = st.form_submit_button(
-                "Create Account", type="primary", use_container_width=True
+                "Create Account ✨", type="primary", use_container_width=True
             )
         if submitted_signup:
             ok, msg = signup_user(new_username, new_email, new_password, confirm_password)
@@ -172,3 +272,8 @@ def render_auth_gate() -> None:
                 st.success(msg)
             else:
                 st.error(msg)
+
+    st.markdown(
+        '<p class="sh-auth-footnote">🔒 Passwords are salted &amp; hashed locally — never stored in plain text.</p>',
+        unsafe_allow_html=True,
+    )
