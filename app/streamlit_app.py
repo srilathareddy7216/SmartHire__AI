@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT_DIR))
 
 from app import data_loader as dl
 from app import theme
+from app import auth
 from src import config
 from src.data.preprocess import clean_text, extract_years_from_resume
 from src.features.match_features import missing_skills, skill_overlap_ratio, build_match_feature_vector
@@ -88,11 +89,20 @@ def detect_subfield(clean_resume_text: str) -> str | None:
 # ---------------------------------------------------------------------------
 st.set_page_config(
     page_title="SmartHire — Resume-to-Job Matching",
-    page_icon="🧭",
+    page_icon="🎓",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 theme.inject()
+
+# ---------------------------------------------------------------------------
+# AUTH GATE — must log in / sign up before seeing anything else.
+# ---------------------------------------------------------------------------
+if not auth.is_authenticated():
+    st.markdown(theme.main_header(), unsafe_allow_html=True)
+    auth.render_auth_gate()
+    st.stop()
+
 st.markdown(theme.main_header(), unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
@@ -124,6 +134,11 @@ if "resume_text" not in st.session_state:
 # ---------------------------------------------------------------------------
 with st.sidebar:
     st.markdown(theme.sidebar_brand(), unsafe_allow_html=True)
+    st.caption(f"Logged in as **{st.session_state.get('username', '')}**")
+    if st.button("Log out", use_container_width=True):
+        auth.logout()
+        st.rerun()
+    st.markdown("---")
     page = st.radio(
         "Navigate",
         ["🏠 Home", "📄 Analyze My Resume", "🗺️ Explore Job Market", "📊 Model Performance", "💬 Career Mentor", "ℹ️ About"],
@@ -281,8 +296,6 @@ elif page == "📄 Analyze My Resume":
 
         tab1, tab2, tab3, tab4 = st.tabs(["🎯 Top Matches", "✅ Shortlisting Fit", "🧩 Skill Gap Report", "📥 Download Report"])
 
-        # --- Tab 1: Top Matches (NEW grid card UI) ---
-        # --- Tab 1: Top Matches (NEW "orbit badge" grid UI) ---
         # --- Tab 1: Top Matches (colorful grid UI, fixed sizing) ---
         with tab1:
             st.markdown(f"**{len(matches)} best-matching postings**, ranked by content similarity.")
@@ -333,7 +346,7 @@ elif page == "📄 Analyze My Resume":
                 ),
                 unsafe_allow_html=True,
             )
-        
+
         # --- Tab 3: Skill Gap ---
         with tab3:
             st.markdown("**Skills to add**, based on your top matches and closest job cluster.")

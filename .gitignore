@@ -38,3 +38,5 @@ data/processed/resumes_clean.parquet
 
 # --- Logs ---
 *.log
+
+data/users.json
