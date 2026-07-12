@@ -185,13 +185,6 @@ div[data-testid="stAppViewContainer"] [data-testid="InputInstructions"]{
   box-shadow: 0 0 0 4px rgba(255,255,255,0.2);
 }
 
-/* Right panel container */
-.sh-auth-panel{
-  background:#fff; border:1px solid #E1E7F7; border-radius: 22px;
-  padding: 1.8rem 2rem 1.4rem 2rem; height:100%;
-  box-shadow: 0 4px 18px rgba(18,23,43,0.05);
-}
-
 /* Tabs — colorful pill style */
 div[data-testid="stAppViewContainer"] .stTabs [data-baseweb="tab-list"]{
   gap: 8px; background: #EEF1FB; padding: 6px; border-radius: 14px;
@@ -279,7 +272,6 @@ def render_auth_gate() -> None:
         )
 
     with right:
-        st.markdown('<div class="sh-auth-panel">', unsafe_allow_html=True)
         tab_login, tab_signup = st.tabs(["🔵 Log In", "🌸 Sign Up"])
 
         with tab_login:
@@ -318,4 +310,3 @@ def render_auth_gate() -> None:
             '<p class="sh-auth-footnote">🔒 Passwords are salted &amp; hashed locally — never stored in plain text.</p>',
             unsafe_allow_html=True,
         )
-        st.markdown('</div>', unsafe_allow_html=True)
