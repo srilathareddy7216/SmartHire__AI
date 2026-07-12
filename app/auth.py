@@ -272,7 +272,7 @@ def render_auth_gate() -> None:
         )
 
     with right:
-        tab_login, tab_signup = st.tabs(["🔵 Log In", "🌸 Sign Up"])
+        tab_login, tab_signup = st.tabs(["👤 Log In", "✍+ Sign Up"])
 
         with tab_login:
             st.markdown('<span id="sh-login-marker"></span>', unsafe_allow_html=True)
