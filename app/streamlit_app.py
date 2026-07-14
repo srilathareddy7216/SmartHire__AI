@@ -93,15 +93,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 theme.inject()
-
-# ---------------------------------------------------------------------------
-# AUTH GATE — must log in / sign up before seeing anything else.
-# ---------------------------------------------------------------------------
-if not auth.is_authenticated():
-    st.markdown(theme.main_header(), unsafe_allow_html=True)
-    auth.render_auth_gate()
-    st.stop()
-
 st.markdown(theme.main_header(), unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
@@ -133,11 +124,6 @@ if "resume_text" not in st.session_state:
 # ---------------------------------------------------------------------------
 with st.sidebar:
     st.markdown(theme.sidebar_brand(), unsafe_allow_html=True)
-    st.caption(f"Logged in as **{st.session_state.get('username', '')}**")
-    if st.button("Log out", use_container_width=True):
-        auth.logout()
-        st.rerun()
-    st.markdown("---")
     page = st.radio(
         "Navigate",
         ["🏠 Home", "📄 Analyze My Resume", "🗺️ Explore Job Market", "📊 Model Performance", "💬 Career Mentor", "ℹ️ About"],
