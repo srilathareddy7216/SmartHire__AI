@@ -21,7 +21,6 @@ sys.path.insert(0, str(ROOT_DIR))
 
 from app import data_loader as dl
 from app import theme
-from app import auth
 from src import config
 from src.data.preprocess import clean_text, extract_years_from_resume
 from src.features.match_features import missing_skills, skill_overlap_ratio, build_match_feature_vector
